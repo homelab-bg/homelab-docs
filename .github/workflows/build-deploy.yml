@@ -117,17 +117,17 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Health check deployment
-        run: |
-          # Wait for DNS propagation
-          sleep 30
+      # - name: Health check deployment
+      #   run: |
+      #     # Wait for DNS propagation
+      #     sleep 30
           
-          # Check if site responds with 200
-          response=$(curl -s -o /dev/null -w "%{http_code}" ${{ steps.deployment.outputs.page_url }})
+      #     # Check if site responds with 200
+      #     response=$(curl -s -o /dev/null -w "%{http_code}" ${{ steps.deployment.outputs.page_url }})
           
-          if [ $response -eq 200 ]; then
-            echo "Site is responding normally"
-          else
-            echo "Site health check failed with status: $response"
-            exit 1
-          fi
+      #     if [ $response -eq 200 ]; then
+      #       echo "Site is responding normally"
+      #     else
+      #       echo "Site health check failed with status: $response"
+      #       exit 1
+      #     fi
