@@ -1,0 +1,117 @@
+name: Build and Deploy Documentation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+# Environment variables
+env:
+  RUBY_VERSION: '3.2'
+  JEKYLL_ENV: production
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v4
+
+      - name: Build site for testing
+        run: bundle exec jekyll build
+        env:
+          JEKYLL_ENV: development
+
+      - name: Run link checker
+        run: |
+          npx --yes linkinator _site --recurse \
+            --skip "^(?!http://localhost)" \
+            --format CSV > broken_links.csv || true
+          
+          if [ -s broken_links.csv ]; then
+            echo "Found broken links:"
+            cat broken_links.csv
+            exit 1
+          fi
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v4
+
+      - name: Restore Jekyll cache
+        uses: actions/cache@v4
+        with:
+          path: _site
+          key: jekyll-site-${{ github.sha }}
+          restore-keys: |
+            jekyll-site-
+
+      - name: Build with Jekyll
+        run: bundle exec jekyll build
+        env:
+          JEKYLL_ENV: production
+          GA_TRACKING_ID: ${{ secrets.GA_TRACKING_ID }}
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Health check deployment
+        run: |
+          # Wait for DNS propagation
+          sleep 30
+          
+          # Check if site responds with 200
+          response=$(curl -s -o /dev/null -w "%{http_code}" ${{ steps.deployment.outputs.page_url }})
+          
+          if [ $response -eq 200 ]; then
+            echo "Site is responding normally"
+          else
+            echo "Site health check failed with status: $response"
+            exit 1
+          fi
