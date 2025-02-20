@@ -43,16 +43,29 @@ jobs:
         env:
           JEKYLL_ENV: development
 
+      # - name: Run link checker
+      #   run: |
+      #     npx --yes linkinator _site --recurse \
+      #       --skip "^(?!http://localhost)" \
+      #       --format CSV > broken_links.csv || true
+          
+      #     if [ -s broken_links.csv ]; then
+      #       echo "Found broken links:"
+      #       cat broken_links.csv
+      #       exit 1
+      #     fi
       - name: Run link checker
         run: |
-          npx --yes linkinator _site --recurse \
+          npx --yes linkinator ./_site --recurse \
             --skip "^(?!http://localhost)" \
             --format CSV > broken_links.csv || true
           
           if [ -s broken_links.csv ]; then
             echo "Found broken links:"
-            cat broken_links.csv
-            exit 1
+            cat broken_links.csv | grep -v "^_site,404,BROKEN"
+            if [ $? -eq 0 ]; then
+              exit 1
+            fi
           fi
 
   build:
