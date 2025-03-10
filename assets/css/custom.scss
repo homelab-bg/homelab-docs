@@ -1,0 +1,78 @@
+---
+---
+
+// Add your custom styles here
+// This file will be processed by Jekyll and output to /assets/css/custom.css
+
+// Example of customizing the site theme
+$homelab-blue: #0066cc;
+$homelab-dark-blue: #004080;
+$homelab-light-blue: #99c2ff;
+$homelab-gray: #e6e6e6;
+
+// Override theme color variables
+$link-color: $homelab-blue;
+$btn-primary-color: $homelab-blue;
+
+// Custom styles for the site
+.site-title {
+  font-weight: bold;
+}
+
+// Custom callout for tips
+.tip {
+  background-color: lighten($homelab-light-blue, 10%);
+  border-left: solid 4px $homelab-blue;
+  border-radius: 4px;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  
+  &::before {
+    content: "💡 Tip: ";
+    font-weight: bold;
+    color: $homelab-dark-blue;
+  }
+}
+
+// Custom table styling
+table {
+  th {
+    background-color: $homelab-dark-blue;
+    color: white;
+  }
+  
+  tr:nth-child(even) {
+    background-color: $homelab-gray;
+  }
+}
+
+// Custom header for services section
+.services-header {
+  border-bottom: 3px solid $homelab-blue;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+// Custom code blocks
+code.language-bash {
+  &::before {
+    content: "$ ";
+    opacity: 0.6;
+  }
+}
+
+// Custom diagram container
+.diagram-container {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+// Responsive adjustments
+@media (max-width: 50rem) {
+  .main-content {
+    padding: 1rem;
+  }
+}
