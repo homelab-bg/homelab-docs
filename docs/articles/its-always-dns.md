@@ -1,8 +1,62 @@
 ---
 layout: default
 title: It's always DNS
-#permalink: /docs/articles/
+parent: Articles
+nav_order: 1
 ---
+
+
+*"It's always DNS"* - Every network engineer, ever
+
+DNS is the foundation of any modern network infrastructure. This section covers the implementation of a robust, high-availability DNS solution that provides network-wide ad blocking, recursive resolution, and proper redundancy.
+
+## Overview
+
+Our DNS implementation consists of:
+
+- **AdGuard Home** - Network-wide ad and tracker blocking
+- **Unbound** - Recursive DNS resolver for privacy
+- **High Availability** - Multiple deployment scenarios
+- **Monitoring** - Comprehensive observability
+
+## Architecture
+
+The DNS solution is built with a layered approach:
+
+```
+Client Request → AdGuard Home → Unbound → Root DNS Servers
+                      ↓
+                 Ad/Tracker
+                  Blocking
+```
+
+## Articles in This Section
+
+1. [It's Always DNS](./its-always-dns/) - Core DNS server implementation
+2. [DNS Monitoring and Observability](./monitoring/) *(Coming Soon)*
+3. [DNS Security and DoT/DoH](./security/) *(Coming Soon)*
+
+## Design Principles
+
+- **Privacy First** - Recursive resolution minimizes external dependencies
+- **Performance** - Local caching and optimized configurations
+- **Reliability** - Multiple deployment targets and health monitoring
+- **Security** - Network segmentation and encrypted DNS options
+- **Observability** - Comprehensive monitoring and alerting
+
+## Implementation Targets
+
+| Target | Status | Purpose |
+|--------|--------|---------|
+| TrueNAS App | ✅ Complete | Primary DNS with fast recovery |
+| Kubernetes | 🏗️ In Progress | Scalable secondary DNS |
+| Docker Compose | ✅ Complete | Development and testing |
+
+---
+
+Ready to dive in? Start with building your first DNS server.
+
+
 
 # Docker Networking: Understanding Bridge vs IPvlan Drivers
 
